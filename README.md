@@ -1,2 +1,2 @@
 # simple-switching
-A Chromium extension for switching through tabs in recent order through a shortcut
+A browser extension for switching through tabs in MRU (most recently used) order
