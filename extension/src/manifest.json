@@ -15,10 +15,17 @@
         "{{firefox}}.scripts": ["src/background.ts"]
     },
 
+    "permissions": ["storage"],
+
     "commands": {
-        "switch-tab": {
-            "description": "Cycle recent tabs",
+        "switch-tab-fwd": {
+            "description": "Cycle recent tabs forward",
             "suggested_key": { "default": "Alt+Q" }
+        },
+
+        "switch-tab-back" : {
+            "description": "Cycle recent tabs backward",
+            "suggested_key": { "default": "Alt+Shift+Q" }
         }
     }
 }

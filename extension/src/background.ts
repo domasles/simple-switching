@@ -23,7 +23,11 @@ browser.tabs.onRemoved.addListener((tabId) => {
 engine.initializeHistory()
 
 browser.commands.onCommand.addListener(async (command) => {
-    if (command === "switch-tab") {
-        await engine.cycleMRUTabs()
+    if (command === "switch-tab-fwd") {
+        await engine.cycleTabs("fwd")
+    }
+
+    if (command === "switch-tab-back") {
+        await engine.cycleTabs("back")
     }
 })

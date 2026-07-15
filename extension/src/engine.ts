@@ -8,6 +8,8 @@ let cycleIndex = 0
 let commitTimeout: ReturnType<typeof setTimeout> | null = null
 let isCycling = false
 
+type Direction = "fwd" | "back"
+
 async function saveHistoryToStorage() {
     try {
         if (browser.storage && browser.storage.local) {
@@ -37,7 +39,7 @@ export function addBackgroundTab(tabId: number) {
     if (tabHistory.length > 0) {
         tabHistory.splice(1, 0, tabId)
     }
-
+    
     else {
         tabHistory.push(tabId)
     }
@@ -92,7 +94,7 @@ export async function initializeHistory() {
     }
 }
 
-export async function cycleMRUTabs() {
+export async function cycleTabs(direction: Direction) {
     if (commitTimeout) {
         clearTimeout(commitTimeout)
     }
@@ -105,12 +107,25 @@ export async function cycleMRUTabs() {
 
         if (!isCycling) {
             isCycling = true
-            cycleIndex = 1
             frozenHistory = [...tabHistory]
+
+            if (direction === "fwd") {
+                cycleIndex = 1
+            }
+
+            else {
+                cycleIndex = frozenHistory.length - 1
+            }
         }
 
         else {
-            cycleIndex = (cycleIndex + 1) % frozenHistory.length
+            if (direction === "fwd") {
+                cycleIndex = (cycleIndex + 1) % frozenHistory.length
+            }
+
+            else {
+                cycleIndex = (cycleIndex - 1 + frozenHistory.length) % frozenHistory.length
+            }
         }
 
         const targetTabId = frozenHistory[cycleIndex]
