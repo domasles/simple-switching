@@ -6,14 +6,21 @@ browser.tabs.onActivated.addListener((activeTab) => {
     engine.promoteTabToFront(activeTab.tabId)
 })
 
+browser.tabs.onCreated.addListener((tab) => {
+    if (tab.id !== undefined) {
+        engine.addBackgroundTab(tab.id)
+    }
+})
+
+browser.tabs.onReplaced.addListener((addedTabId, removedTabId) => {
+    engine.replaceTabId(addedTabId, removedTabId)
+})
+
 browser.tabs.onRemoved.addListener((tabId) => {
     engine.removeTabFromHistory(tabId)
 })
 
-browser.tabs.query({ currentWindow: true }).then((tabs) => {
-    const ids = tabs.map(t => t.id).filter((id): id is number => id !== undefined)
-    engine.initializeHistory(ids)
-})
+engine.initializeHistory()
 
 browser.commands.onCommand.addListener(async (command) => {
     if (command === "switch-tab") {
