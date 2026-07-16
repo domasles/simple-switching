@@ -1,1 +1,1 @@
-export const CYCLE_DELAY_MS = 250
+export const CYCLE_DELAY_MS = 230
