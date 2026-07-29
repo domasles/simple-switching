@@ -30,7 +30,11 @@ class WelcomeScreen(Screen):
                 has_privileges = is_admin()
 
                 if has_privileges:
-                    yield Static("[bold]Privilege Status:[/bold] [bold green]Elevated (Administrator/Root)[/bold green]\n")
+                    if sys.platform == "win32":
+                        yield Static("[bold]Privilege Status:[/bold] [bold green]Administrator[/bold green]\n")
+
+                    if sys.platform == "darwin":
+                        yield Static("[bold]Privilege Status:[/bold] [bold green]Root[/bold green]\n")
 
                     with Horizontal():
                         yield Button("Begin Setup", variant="primary", id="btn-install")
