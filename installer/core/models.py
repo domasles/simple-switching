@@ -9,7 +9,7 @@ from pathlib import Path
 class PlatformBrowserConfig:
     """Holds OS-specific metadata for a single browser."""
 
-    base_path: str
+    config_path: str
     executables: List[str] = field(default_factory=list)
     policy_key: Optional[str] = None     # Windows Registry path
     policy_bundle: Optional[str] = None  # macOS plist bundle ID
@@ -48,7 +48,7 @@ class AppConfig:
     shortcut_map: Dict[str, str]
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class BrowserProfile:
     """Represents a discovered browser profile on the host filesystem."""
 
@@ -57,7 +57,8 @@ class BrowserProfile:
     profile_name: str
     profile_path: Path
     preferences_path: Path
-    executables: List[str]
+    executables: List[str] = field(hash=False)
+    executable_path: Optional[str] = field(default=None, hash=False)
 
     @property
     def label(self) -> str:

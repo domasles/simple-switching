@@ -1,7 +1,5 @@
 import psutil
 import time
-import sys
-
 from typing import List, Set
 
 from installer.core.models import BrowserProfile
@@ -10,14 +8,21 @@ from installer.core.models import BrowserProfile
 def get_running_browser_pids(executables: List[str]) -> List[psutil.Process]:
     """Scans running processes and returns a list of psutil.Process matching target executables."""
 
-    target_names = {exe.lower() for exe in executables}
+    targets = {exe.lower() for exe in executables}
     matching_processes: List[psutil.Process] = []
 
-    for proc in psutil.process_iter(['pid', 'name']):
+    for proc in psutil.process_iter(['pid', 'exe']):
         try:
-            pname = proc.info['name']
-            if pname and pname.lower() in target_names:
+            pexe = proc.info.get('exe')
+
+            if not pexe:
+                continue
+
+            pexe_lower = pexe.lower()
+
+            if any(pexe_lower == target or pexe_lower.endswith(f"\\{target}") or pexe_lower.endswith(f"/{target}") for target in targets):
                 matching_processes.append(proc)
+
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             continue
 
@@ -37,19 +42,35 @@ def terminate_browser_processes(profiles: List[BrowserProfile], timeout: float =
     if not procs:
         return True
 
-    # Attempt graceful shutdown first
+    for proc in procs:
+        try:
+            exe_path = proc.info.get('exe')
+
+            if exe_path:
+                for profile in profiles:
+                    if not profile.executable_path:
+                        pexe_lower = exe_path.lower()
+
+                        if any(pexe_lower == target.lower() or pexe_lower.endswith(f"\\{target.lower()}") or pexe_lower.endswith(f"/{target.lower()}") for target in profile.executables):
+                            profile.executable_path = exe_path
+
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+
+    # Terminate captured processes
     for proc in procs:
         try:
             proc.terminate()
+
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             pass
 
     gone, alive = psutil.wait_procs(procs, timeout=timeout)
 
-    # Force kill any remaining processes
     for proc in alive:
         try:
             proc.kill()
+
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             pass
 

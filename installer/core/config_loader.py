@@ -1,10 +1,10 @@
 import json
 import os
 
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from pathlib import Path
 
-from installer.core.models import AppConfig,BrowserDefinition, PlatformBrowserConfig
+from installer.core.models import AppConfig, BrowserDefinition, PlatformBrowserConfig
 
 
 def expand_platform_path(raw_path: str) -> Path:
@@ -18,14 +18,9 @@ def _parse_platform_config(data: Optional[Dict[str, Any]]) -> Optional[PlatformB
     if not data:
         return None
 
-    executables = data.get("executables", [])
-
-    if not executables and "exe" in data:
-        executables = [data["exe"]]
-
     return PlatformBrowserConfig(
-        base_path=data["base_path"],
-        executables=executables,
+        config_path=data["config_path"],
+        executables=data.get("executables", []),
         policy_key=data.get("policy_key"),
         policy_bundle=data.get("policy_bundle"),
         policy_dir=data.get("policy_dir"),

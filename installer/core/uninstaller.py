@@ -1,29 +1,17 @@
 import subprocess
 import plistlib
+import shutil
 import json
 import sys
-import os
 
-from typing import Optional
 from pathlib import Path
+from typing import List
 
-from installer.core.models import AppConfig, BrowserDefinition
-
-
-def generate_update_manifest_xml(extension_id: str, crx_url: str, version: str = "1.0.0") -> str:
-    """Generates update XML manifest content."""
-
-    return f"""<?xml version='1.0' encoding='UTF-8'?>
-<gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
-  <app appid='{extension_id}'>
-    <updatecheck codebase='{crx_url}' version='{version}' />
-  </app>
-</gupdate>
-"""
+from installer.core.models import AppConfig, BrowserProfile
 
 
-def deploy_browser_policy(profiles: List[BrowserProfile], config: AppConfig, update_xml_url: str, extension_url: str) -> List[BrowserProfile]:
-    """Deploys force-installation enterprise policies."""
+def remove_browser_policies(profiles: List[BrowserProfile], config: AppConfig) -> List[BrowserProfile]:
+    """Removes enterprise force-installation policies."""
 
     if not profiles:
         return []
@@ -48,20 +36,13 @@ def deploy_browser_policy(profiles: List[BrowserProfile], config: AppConfig, upd
             reg_path = f"SOFTWARE\\Policies\\{plat_config.policy_key}\\ExtensionSettings"
 
             try:
-                with winreg.CreateKeyEx(winreg.HKEY_LOCAL_MACHINE, reg_path, 0, winreg.KEY_SET_VALUE) as key:
-                    setting_payload = json.dumps({
-                        config.extension_id: {
-                            "installation_mode": "force_installed",
-                            "update_url": update_xml_url
-                        }
-                    })
-
-                    winreg.SetValueEx(key, config.extension_id, 0, winreg.REG_SZ, setting_payload)
+                with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path, 0, winreg.KEY_SET_VALUE) as key:
+                    winreg.DeleteValue(key, config.extension_id)
 
                 successful_profiles.append(profile)
 
             except Exception:
-                pass
+                successful_profiles.append(profile)
 
         return successful_profiles
 
@@ -81,22 +62,19 @@ def deploy_browser_policy(profiles: List[BrowserProfile], config: AppConfig, upd
                 continue
 
             plist_file = plist_dir / f"{plat_config.policy_bundle}.plist"
-            data = {}
 
             try:
                 if plist_file.exists():
                     with open(plist_file, "rb") as f:
                         data = plistlib.load(f)
 
-                ext_settings = data.setdefault("ExtensionSettings", {})
+                    ext_settings = data.get("ExtensionSettings", {})
 
-                ext_settings[config.extension_id] = {
-                    "installation_mode": "force_installed",
-                    "update_url": update_xml_url
-                }
+                    if config.extension_id in ext_settings:
+                        del ext_settings[config.extension_id]
 
-                with open(plist_file, "wb") as f:
-                    plistlib.dump(data, f)
+                        with open(plist_file, "wb") as f:
+                            plistlib.dump(data, f)
 
                 successful_profiles.append(profile)
 
@@ -121,21 +99,8 @@ def deploy_browser_policy(profiles: List[BrowserProfile], config: AppConfig, upd
             if not plat_config or not plat_config.policy_dir:
                 continue
 
-            policy_dir = Path(plat_config.policy_dir)
-            policy_file = policy_dir / "custom_extension_installer.json"
-
-            policy_data = {
-                "ExtensionSettings": {
-                    config.extension_id: {
-                        "installation_mode": "force_installed",
-                        "update_url": update_xml_url
-                    }
-                }
-            }
-
-            json_str = json.dumps(policy_data, indent=2)
-            cmd_snippet = f"mkdir -p '{policy_dir}' && cat << 'EOF' > '{policy_file}'\n{json_str}\nEOF"
-            commands.append(cmd_snippet)
+            policy_file = Path(plat_config.policy_dir) / "custom_extension_installer.json"
+            commands.append(f"rm -f '{policy_file}'")
             profile_cmd_map.append(profile)
 
         if not commands:
@@ -158,3 +123,23 @@ def deploy_browser_policy(profiles: List[BrowserProfile], config: AppConfig, upd
 
     return []
 
+
+def remove_extension_directory(profile: BrowserProfile, config: AppConfig) -> bool:
+    """Removes the extension installation folder."""
+
+    profile_path = getattr(profile, "profile_path", None)
+
+    if not profile_path:
+        return False
+
+    ext_dir = profile_path / "Extensions" / config.extension_id
+
+    if ext_dir.exists():
+        try:
+            shutil.rmtree(ext_dir)
+            return True
+
+        except OSError:
+            return False
+
+    return True

@@ -34,6 +34,7 @@ def inject_extension_shortcut(profile: BrowserProfile, config: AppConfig, comman
     try:
         with open(pref_path, "r", encoding="utf-8") as f:
             data: Dict[str, Any] = json.load(f)
+
     except (json.JSONDecodeError, OSError):
         return False
 
@@ -41,23 +42,30 @@ def inject_extension_shortcut(profile: BrowserProfile, config: AppConfig, comman
     extensions_node = data.setdefault("extensions", {})
     commands_node = extensions_node.setdefault("commands", {})
 
-    platform_key = get_platform_shortcut_key(config.shortcut_map)
-    shortcut_entry = commands_node.setdefault(platform_key, {})
+    target_key = get_platform_shortcut_key(config.shortcut_map)
+    keys_to_delete = []
+
+    for key, value in list(commands_node.items()):
+        if isinstance(value, dict) and value.get("extension") == config.extension_id:
+            if value.get("command_name") == command_name:
+                keys_to_delete.append(key)
+
+    for k in keys_to_delete:
+        del commands_node[k]
 
     # Inject command mapping
-    shortcut_entry[command_name] = {
+    commands_node[target_key] = {
         "command_name": command_name,
         "extension": config.extension_id,
         "global": False
     }
 
-    # Atomic Write: Write to temporary file in same directory first, then replace
     temp_file = pref_path.with_suffix(".tmp")
 
     try:
         with open(temp_file, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
-        
+
         os.replace(temp_file, pref_path)
         return True
 
