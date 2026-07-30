@@ -1,5 +1,6 @@
 import subprocess
 import plistlib
+import shlex
 import json
 import sys
 import os
@@ -159,14 +160,14 @@ def deploy_browser_policy(profiles: List[BrowserProfile], config: AppConfig, upd
             }
 
             json_str = json.dumps(policy_data, indent=2)
-            cmd_snippet = f"mkdir -p '{shlex.quote(str(policy_dir))}' && cat << 'EOF' > '{shlex.quote(str(policy_file))}'\n{json_str}\nEOF"
+            cmd_snippet = f"mkdir -p {shlex.quote(str(policy_dir))} && cat << 'EOF' > {shlex.quote(str(policy_file))}\n{json_str}\nEOF\n"
             commands.append(cmd_snippet)
             profile_cmd_map.append(profile)
 
         if not commands:
             return []
 
-        full_script = " && ".join(commands)
+        full_script = " && ".join(cmd.strip() for cmd in commands)
 
         try:
             subprocess.run(

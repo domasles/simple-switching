@@ -1,0 +1,18 @@
+Container {
+    padding: 1 2;
+}
+
+.title {
+    margin-bottom: 1;
+}
+
+Button {
+    text-style: bold;
+    margin-top: 1;
+    margin-right: 1;
+}
+
+Button:focus {
+    text-style: bold;
+    outline: hkey white;
+}

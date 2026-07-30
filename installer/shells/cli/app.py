@@ -19,22 +19,7 @@ from installer.shells.cli.screens.finish import FinishScreen
 class ExtensionInstaller(App):
     """Main Textual Application Controller."""
 
-    CSS = """
-    Container {
-        padding: 1 2;
-    }
-    .title {
-        margin-bottom: 1;
-    }
-    Button {
-        margin-top: 1;
-        margin-right: 1;
-    }
-    Button:focus {
-        text-style: bold;
-        outline: hkey white;
-    }
-    """
+    CSS_PATH = "assets/style.css"
 
     SCREENS = {
         "welcome": WelcomeScreen,

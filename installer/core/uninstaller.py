@@ -1,6 +1,7 @@
 import subprocess
 import plistlib
 import shutil
+import shlex
 import json
 import sys
 
@@ -100,7 +101,7 @@ def remove_browser_policies(profiles: List[BrowserProfile], config: AppConfig) -
                 continue
 
             policy_file = Path(plat_config.policy_dir) / "custom_extension_installer.json"
-            commands.append(f"rm -f '{shlex.quote(str(policy_file))}'")
+            commands.append(f"rm -f {shlex.quote(str(policy_file))}")
             profile_cmd_map.append(profile)
 
         if not commands:
