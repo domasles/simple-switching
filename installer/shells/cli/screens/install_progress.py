@@ -12,6 +12,8 @@ from textual.screen import Screen
 from installer.core.policy_installer import deploy_browser_policy, generate_update_manifest_xml
 from installer.core.preferences_editor import inject_extension_shortcut
 from installer.core.process_manager import terminate_browser_processes
+from installer.core.discovery import check_extension_dir
+from installer.core.id_computer import get_extension_id
 
 
 class InstallProgressScreen(Screen):
@@ -32,15 +34,12 @@ class InstallProgressScreen(Screen):
         """Triggers the async background execution worker when screen loads."""
         self.run_worker(self._run_installation_pipeline, thread=True)
 
-    def _wait_for_extension_extraction(self, profile, extension_id: str) -> bool:
+    def _wait_for_extension_extraction(self, profile, extension_id: str, profile_path: Path, extension_dir: Path) -> bool:
         """Launches browser autonomously to force immediate policy extension download & extraction."""
-
-        profile_path = getattr(profile, "profile_path", None)
 
         if not profile_path:
             return False
 
-        ext_dir = profile_path / "Extensions" / extension_id
         exec_path = getattr(profile, "executable_path", None) or "chromium"
 
         user_data_dir = profile_path.parent
@@ -63,31 +62,16 @@ class InstallProgressScreen(Screen):
 
         # Poll until manifest.json is present and completely written to disk
         while True:
-            extracted = False
-
-            if ext_dir.exists():
-                for manifest_path in ext_dir.glob("**/manifest.json"):
-                    if manifest_path.is_file() and manifest_path.stat().st_size > 0:
-                        try:
-                            with open(manifest_path, "r", encoding="utf-8") as f:
-                                json.load(f)
-
-                            extracted = True
-                            break
-
-                        except (json.JSONDecodeError, OSError):
-                            pass
-
-            if extracted:
+            if check_extension_dir(extension_dir):
                 break
 
             time.sleep(0.2)
 
-        time.sleep(0.5)
         proc.terminate()
 
         try:
             proc.wait(timeout=3)
+
         except subprocess.TimeoutExpired:
             proc.kill()
             proc.wait()
@@ -100,9 +84,31 @@ class InstallProgressScreen(Screen):
 
         app = self.app
         config = app.app_config
-        selected_profiles = getattr(app, "selected_profiles", [])
+        cache_dir = app.cache_dir
+
+        raw_selected = getattr(app, "selected_profiles", [])
+        extension_id = get_extension_id(cache_dir, config)
 
         results = {"success": [], "skipped": []}
+
+        # Pre-install filter
+        selected_profiles = []
+
+        for profile in raw_selected:
+            profile_path = getattr(profile, "profile_path", None)
+            extension_dir = Path(profile_path / "Extensions" / extension_id) if profile_path else None
+
+            if extension_dir and check_extension_dir(extension_dir):
+                results["success"].append(profile.label)
+
+            else:
+                selected_profiles.append(profile)
+
+        if not selected_profiles:
+            app.installation_results = results
+            self.app.call_from_thread(self.app.push_screen, "finish")
+
+            return
 
         log.write_line("Step 1/4: Closing target browser processes...")
 
@@ -113,12 +119,12 @@ class InstallProgressScreen(Screen):
         app.server.start()
 
         update_xml_url = app.server.get_url("update.xml")
-        extension_url = app.server.get_url("extension.crx")
+        extension_url = app.server.get_url(config.extension_filename)
 
-        manifest_content = generate_update_manifest_xml(config.extension_id, extension_url)
+        manifest_content = generate_update_manifest_xml(extension_id, extension_url)
         (app.cache_dir / "update.xml").write_text(manifest_content, encoding="utf-8")
 
-        eligible_profiles = deploy_browser_policy(selected_profiles, config, update_xml_url, extension_url)
+        eligible_profiles = deploy_browser_policy(selected_profiles, extension_id, config, update_xml_url)
         eligible_set = set(eligible_profiles)
 
         for profile in selected_profiles:
@@ -131,7 +137,10 @@ class InstallProgressScreen(Screen):
         log.write_line("Step 3/4: Triggering background extension extraction...")
 
         for profile in eligible_profiles:
-            extracted = self._wait_for_extension_extraction(profile, config.extension_id)
+            profile_path = Path(getattr(profile, "profile_path", None))
+            extension_dir = Path(profile_path / "Extensions" / extension_id)
+
+            extracted = self._wait_for_extension_extraction(profile, extension_id, profile_path, extension_dir)
 
             if extracted:
                 log.write_line(f"  Extracted for {profile.label}")
@@ -144,7 +153,7 @@ class InstallProgressScreen(Screen):
         log.write_line("Step 4/4: Injecting shortcut keys into profile Preferences...")
 
         for profile in eligible_profiles:
-            success = inject_extension_shortcut(profile, config)
+            success = inject_extension_shortcut(profile, extension_id, config)
 
             if success:
                 log.write_line(f"  Configured {profile.label}")

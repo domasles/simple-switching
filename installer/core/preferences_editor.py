@@ -20,7 +20,7 @@ def get_platform_shortcut_key(shortcut_map: Dict[str, str]) -> str:
         return shortcut_map.get("linux", "linux:Ctrl+Tab")
 
 
-def inject_extension_shortcut(profile: BrowserProfile, config: AppConfig, command_name: str = "switch-tab") -> bool:
+def inject_extension_shortcut(profile: BrowserProfile, extension_id: str, config: AppConfig, command_name: str = "switch-tab") -> bool:
     """
     Safely injects keybinding shortcuts directly into target profile's Preferences JSON.
     Uses atomic tempfile writing to protect against JSON file corruption.
@@ -46,7 +46,7 @@ def inject_extension_shortcut(profile: BrowserProfile, config: AppConfig, comman
     keys_to_delete = []
 
     for key, value in list(commands_node.items()):
-        if isinstance(value, dict) and value.get("extension") == config.extension_id:
+        if isinstance(value, dict) and value.get("extension") == extension_id:
             if value.get("command_name") == command_name:
                 keys_to_delete.append(key)
 
@@ -56,7 +56,7 @@ def inject_extension_shortcut(profile: BrowserProfile, config: AppConfig, comman
     # Inject command mapping
     commands_node[target_key] = {
         "command_name": command_name,
-        "extension": config.extension_id,
+        "extension": extension_id,
         "global": False
     }
 

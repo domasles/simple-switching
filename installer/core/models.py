@@ -42,8 +42,7 @@ class BrowserDefinition:
 class AppConfig:
     """Master application configuration parsed from browsers.json."""
 
-    extension_id: str
-    default_shortcut: str
+    extension_filename: str
     browsers: Dict[str, BrowserDefinition]
     shortcut_map: Dict[str, str]
 

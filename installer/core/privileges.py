@@ -1,6 +1,7 @@
 import sys
 import os
 
+
 def is_admin() -> bool:
     """Checks whether the current process has oot privileges."""
 

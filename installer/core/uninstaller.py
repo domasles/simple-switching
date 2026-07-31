@@ -11,7 +11,7 @@ from typing import List
 from installer.core.models import AppConfig, BrowserProfile
 
 
-def remove_browser_policies(profiles: List[BrowserProfile], config: AppConfig) -> List[BrowserProfile]:
+def remove_browser_policies(profiles: List[BrowserProfile], extension_id: str, config: AppConfig) -> List[BrowserProfile]:
     """Removes enterprise force-installation policies."""
 
     if not profiles:
@@ -38,7 +38,7 @@ def remove_browser_policies(profiles: List[BrowserProfile], config: AppConfig) -
 
             try:
                 with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path, 0, winreg.KEY_SET_VALUE) as key:
-                    winreg.DeleteValue(key, config.extension_id)
+                    winreg.DeleteValue(key, extension_id)
 
                 successful_profiles.append(profile)
 
@@ -71,8 +71,8 @@ def remove_browser_policies(profiles: List[BrowserProfile], config: AppConfig) -
 
                     ext_settings = data.get("ExtensionSettings", {})
 
-                    if config.extension_id in ext_settings:
-                        del ext_settings[config.extension_id]
+                    if extension_id in ext_settings:
+                        del ext_settings[extension_id]
 
                         with open(plist_file, "wb") as f:
                             plistlib.dump(data, f)
@@ -125,7 +125,7 @@ def remove_browser_policies(profiles: List[BrowserProfile], config: AppConfig) -
     return []
 
 
-def remove_extension_directory(profile: BrowserProfile, config: AppConfig) -> bool:
+def remove_extension_directory(profile: BrowserProfile, extension_id: str) -> bool:
     """Removes the extension installation folder."""
 
     profile_path = getattr(profile, "profile_path", None)
@@ -133,7 +133,7 @@ def remove_extension_directory(profile: BrowserProfile, config: AppConfig) -> bo
     if not profile_path:
         return False
 
-    ext_dir = profile_path / "Extensions" / config.extension_id
+    ext_dir = profile_path / "Extensions" / extension_id
 
     if ext_dir.exists():
         try:

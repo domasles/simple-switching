@@ -23,7 +23,7 @@ def generate_update_manifest_xml(extension_id: str, crx_url: str, version: str =
 """
 
 
-def deploy_browser_policy(profiles: List[BrowserProfile], config: AppConfig, update_xml_url: str, extension_url: str) -> List[BrowserProfile]:
+def deploy_browser_policy(profiles: List[BrowserProfile], extension_id: str, config: AppConfig, update_xml_url: str) -> List[BrowserProfile]:
     """Deploys force-installation enterprise policies."""
 
     if not profiles:
@@ -53,13 +53,13 @@ def deploy_browser_policy(profiles: List[BrowserProfile], config: AppConfig, upd
             try:
                 with winreg.CreateKeyEx(winreg.HKEY_LOCAL_MACHINE, reg_path_settings, 0, winreg.KEY_SET_VALUE) as key:
                     setting_payload = json.dumps({
-                        config.extension_id: {
+                        extension_id: {
                             "installation_mode": "force_installed",
                             "update_url": update_xml_url
                         }
                     })
 
-                    winreg.SetValueEx(key, config.extension_id, 0, winreg.REG_SZ, setting_payload)
+                    winreg.SetValueEx(key, extension_id, 0, winreg.REG_SZ, setting_payload)
 
                 with winreg.CreateKeyEx(winreg.HKEY_LOCAL_MACHINE, reg_path_forcelist, 0, winreg.KEY_ALL_ACCESS) as key:
                     index = 1
@@ -72,7 +72,7 @@ def deploy_browser_policy(profiles: List[BrowserProfile], config: AppConfig, upd
                         except OSError:
                             break
 
-                    force_entry = f"{config.extension_id};{update_xml_url}"
+                    force_entry = f"{extension_id};{update_xml_url}"
                     winreg.SetValueEx(key, str(index), 0, winreg.REG_SZ, force_entry)
 
                 successful_profiles.append(profile)
@@ -107,13 +107,13 @@ def deploy_browser_policy(profiles: List[BrowserProfile], config: AppConfig, upd
 
                 ext_settings = data.setdefault("ExtensionSettings", {})
 
-                ext_settings[config.extension_id] = {
+                ext_settings[extension_id] = {
                     "installation_mode": "force_installed",
                     "update_url": update_xml_url
                 }
 
                 ext_forcelist = data.setdefault("ExtensionInstallForcelist", [])
-                force_entry = f"{config.extension_id};{update_xml_url}"
+                force_entry = f"{extension_id};{update_xml_url}"
 
                 if force_entry not in ext_forcelist:
                     ext_forcelist.append(force_entry)
@@ -149,13 +149,13 @@ def deploy_browser_policy(profiles: List[BrowserProfile], config: AppConfig, upd
 
             policy_data = {
                 "ExtensionSettings": {
-                    config.extension_id: {
+                    extension_id: {
                         "installation_mode": "force_installed",
                         "update_url": update_xml_url
                     }
                 },
                 "ExtensionInstallForcelist": [
-                    f"{config.extension_id};{update_xml_url}"
+                    f"{extension_id};{update_xml_url}"
                 ]
             }
 

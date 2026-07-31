@@ -1,4 +1,5 @@
 import shutil
+import json
 import sys
 import os
 
@@ -28,6 +29,22 @@ def resolve_default_executable_path(executables: List[str]) -> Optional[str]:
             return found_in_path
 
     return None
+
+
+def check_extension_dir(extention_dir: Path) -> bool:
+    if extention_dir.exists():
+        for manifest_path in extention_dir.glob("**/manifest.json"):
+            if manifest_path.is_file() and manifest_path.stat().st_size > 0:
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as f:
+                        json.load(f)
+
+                    return True
+
+                except (json.JSONDecodeError, OSError):
+                    pass
+
+    return False
 
 
 def scan_browser_profiles(config: AppConfig) -> List[BrowserProfile]:

@@ -1,6 +1,5 @@
 {
-  "extension_id": "jphmkljlfajicnljdeanblfieaffiebn",
-  "default_shortcut": "Ctrl+Tab",
+  "extension_filename": "simple-switching.crx",
   "browsers": {
     "chrome": {
       "display_name": "Google Chrome",

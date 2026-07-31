@@ -48,8 +48,7 @@ def load_app_config(config_path: Path) -> AppConfig:
         )
 
     return AppConfig(
-        extension_id=data["extension_id"],
-        default_shortcut=data.get("default_shortcut", "Ctrl+Tab"),
+        extension_filename=data["extension_filename"],
         browsers=browsers,
         shortcut_map=data.get("shortcut", {}),
     )
