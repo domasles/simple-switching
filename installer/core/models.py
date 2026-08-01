@@ -45,6 +45,10 @@ class AppConfig:
     extension_filename: str
     browsers: Dict[str, BrowserDefinition]
     shortcut_map: Dict[str, str]
+    remote_release_vendor: Optional[str] = None
+    remote_release_repo: Optional[str] = None
+    remote_release_tag: Optional[str] = None
+    remote_download_url: Optional[str] = None
 
 
 @dataclass(unsafe_hash=True)

@@ -1,4 +1,8 @@
 {
+  "remote_release_vendor": "github",
+  "remote_release_repo": "domasles/simple-switching",
+  "remote_release_tag": "latest",
+  "remote_download_url": "",
   "extension_filename": "simple-switching.crx",
   "browsers": {
     "chrome": {

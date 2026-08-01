@@ -51,4 +51,8 @@ def load_app_config(config_path: Path) -> AppConfig:
         extension_filename=data["extension_filename"],
         browsers=browsers,
         shortcut_map=data.get("shortcut", {}),
+        remote_release_vendor=data.get("remote_release_vendor"),
+        remote_release_repo=data.get("remote_release_repo"),
+        remote_release_tag=data.get("remote_release_tag"),
+        remote_download_url=data.get("remote_download_url"),
     )

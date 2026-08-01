@@ -5,8 +5,6 @@ from pathlib import Path
 
 
 def get_extension_id(cache_dir: Path, config: AppConfig):
-    from installer.shells.cli.app import App
-
     with open(f"{cache_dir}/{config.extension_filename}", "rb") as f:
         f.seek(12)
         header = f.read(struct.unpack("<I", f.read(4))[0] if f.seek(8) else 0)
