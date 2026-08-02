@@ -4,3 +4,8 @@ cache/
 
 # Virtual Environments
 venv/
+
+# Build
+build/
+dist/
+*.spec

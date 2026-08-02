@@ -1,7 +1,8 @@
 import struct
 
-from installer.core.config_loader import AppConfig
 from pathlib import Path
+
+from core.config_loader import AppConfig
 
 
 def get_extension_id(cache_dir: Path, config: AppConfig):

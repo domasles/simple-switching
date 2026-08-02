@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-from installer.core.models import AppConfig, BrowserProfile
+from core.models import AppConfig, BrowserProfile
 
 
 def remove_browser_policies(profiles: List[BrowserProfile], extension_id: str, config: AppConfig) -> List[BrowserProfile]:

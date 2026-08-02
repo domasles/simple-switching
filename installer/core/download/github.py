@@ -2,8 +2,8 @@ import requests
 
 from pathlib import Path
 
-from installer.core.download.base import Vendor
-from installer.core.models import AppConfig
+from core.download.base import Vendor
+from core.models import AppConfig
 
 
 class GitHubVendor(Vendor):

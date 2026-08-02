@@ -6,8 +6,8 @@ import os
 from typing import List, Optional
 from pathlib import Path
 
-from installer.core.config_loader import expand_platform_path
-from installer.core.models import AppConfig, BrowserProfile
+from core.config_loader import expand_platform_path
+from core.models import AppConfig, BrowserProfile
 
 
 def resolve_default_executable_path(executables: List[str]) -> Optional[str]:

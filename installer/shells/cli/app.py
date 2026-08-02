@@ -1,22 +1,32 @@
 import argparse
+import sys
 
 from pathlib import Path
 from typing import List
 
 from textual.app import App
 
-from installer.core.models import AppConfig, BrowserProfile
-from installer.core.discovery import scan_browser_profiles
-from installer.core.config_loader import load_app_config
-from installer.core.local_server import LocalServer
+from core.models import AppConfig, BrowserProfile
+from core.discovery import scan_browser_profiles
+from core.config_loader import load_app_config
+from core.local_server import LocalServer
 
-from installer.shells.cli.screens.uninstall_progress import UninstallProgressScreen
-from installer.shells.cli.screens.download_progress import DownloadProgressScreen
-from installer.shells.cli.screens.install_progress import InstallProgressScreen
-from installer.shells.cli.screens.prompt_path import PathPromptScreen
-from installer.shells.cli.screens.selector import SelectorScreen
-from installer.shells.cli.screens.welcome import WelcomeScreen
-from installer.shells.cli.screens.finish import FinishScreen
+from shells.cli.screens.uninstall_progress import UninstallProgressScreen
+from shells.cli.screens.download_progress import DownloadProgressScreen
+from shells.cli.screens.install_progress import InstallProgressScreen
+from shells.cli.screens.prompt_path import PathPromptScreen
+from shells.cli.screens.selector import SelectorScreen
+from shells.cli.screens.welcome import WelcomeScreen
+from shells.cli.screens.finish import FinishScreen
+
+
+def get_bundle_dir() -> Path:
+    """Returns base directory containing app assets."""
+
+    if hasattr(sys, "_MEIPASS"):
+        return Path(sys._MEIPASS)
+
+    return Path(__file__).resolve().parent.parent.parent
 
 
 class ExtensionInstaller(App):
@@ -86,10 +96,11 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    config_path = get_bundle_dir() / "config" / "config.json"
     cache_dir = Path.home() / "Downloads" / "cache"
 
     app = ExtensionInstaller(
-        config_path=Path("installer/config/config.json"),
+        config_path=config_path,
         cache_dir=cache_dir,
         local_crx_path=args.local_path
     )

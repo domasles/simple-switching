@@ -8,10 +8,10 @@ from textual.containers import Container, Vertical
 from textual.app import ComposeResult
 from textual.screen import Screen
 
-from installer.core.uninstaller import remove_browser_policies, remove_extension_directory
-from installer.core.process_manager import terminate_browser_processes
-from installer.core.discovery import check_extension_dir
-from installer.core.id_computer import get_extension_id
+from core.uninstaller import remove_browser_policies, remove_extension_directory
+from core.process_manager import terminate_browser_processes
+from core.discovery import check_extension_dir
+from core.id_computer import get_extension_id
 
 
 class UninstallProgressScreen(Screen):

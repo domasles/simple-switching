@@ -1,6 +1,6 @@
-from installer.core.download.github import GitHubVendor
-from installer.core.download.url import UrlVendor
-from installer.core.download.base import Vendor
+from core.download.github import GitHubVendor
+from core.download.url import UrlVendor
+from core.download.base import Vendor
 
 VENDORS = {
     "github": GitHubVendor,

@@ -1,8 +1,9 @@
 import psutil
 import time
+
 from typing import List, Set
 
-from installer.core.models import BrowserProfile
+from core.models import BrowserProfile
 
 
 def get_running_browser_pids(executables: List[str]) -> List[psutil.Process]:

@@ -6,7 +6,7 @@ import os
 from typing import Dict, Any
 from pathlib import Path
 
-from installer.core.models import AppConfig, BrowserProfile
+from core.models import AppConfig, BrowserProfile
 
 
 def get_platform_shortcut_key(shortcut_map: Dict[str, str]) -> str:

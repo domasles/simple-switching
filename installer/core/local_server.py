@@ -2,8 +2,8 @@ import socketserver
 import http.server
 import threading
 
-from pathlib import Path
 from typing import Optional
+from pathlib import Path
 
 
 class LocalServer:

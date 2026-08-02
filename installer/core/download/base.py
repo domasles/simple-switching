@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from installer.core.models import AppConfig
+from core.models import AppConfig
 
 
 class Vendor(ABC):

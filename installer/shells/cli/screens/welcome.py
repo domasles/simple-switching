@@ -5,7 +5,7 @@ from textual.widgets import Button, Header, Footer, Static
 from textual.app import ComposeResult
 from textual.screen import Screen
 
-from installer.core.privileges import is_admin
+from core.privileges import is_admin
 
 
 class WelcomeScreen(Screen):

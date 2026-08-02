@@ -9,11 +9,11 @@ from textual.containers import Container, Vertical
 from textual.app import ComposeResult
 from textual.screen import Screen
 
-from installer.core.policy_installer import deploy_browser_policy, generate_update_manifest_xml
-from installer.core.preferences_editor import inject_extension_shortcut
-from installer.core.process_manager import terminate_browser_processes
-from installer.core.discovery import check_extension_dir
-from installer.core.id_computer import get_extension_id
+from core.policy_installer import deploy_browser_policy, generate_update_manifest_xml
+from core.preferences_editor import inject_extension_shortcut
+from core.process_manager import terminate_browser_processes
+from core.discovery import check_extension_dir
+from core.id_computer import get_extension_id
 
 
 class InstallProgressScreen(Screen):

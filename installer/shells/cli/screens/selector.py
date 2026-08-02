@@ -6,7 +6,7 @@ from textual.containers import Container, Vertical
 from textual.app import ComposeResult
 from textual.screen import Screen
 
-from installer.core.models import BrowserProfile
+from core.models import BrowserProfile
 
 
 class SelectorScreen(Screen):

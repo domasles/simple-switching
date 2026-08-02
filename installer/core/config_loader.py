@@ -4,7 +4,7 @@ import os
 from typing import Dict, Any, Optional
 from pathlib import Path
 
-from installer.core.models import AppConfig, BrowserDefinition, PlatformBrowserConfig
+from core.models import AppConfig, BrowserDefinition, PlatformBrowserConfig
 
 
 def expand_platform_path(raw_path: str) -> Path:

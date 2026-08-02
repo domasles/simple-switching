@@ -3,7 +3,7 @@ from textual.containers import Container, Vertical
 from textual.app import ComposeResult
 from textual.screen import Screen
 
-from installer.core.download import download_extension
+from core.download import download_extension
 
 
 class DownloadProgressScreen(Screen):

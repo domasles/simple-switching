@@ -8,7 +8,7 @@ import os
 from typing import Optional, List
 from pathlib import Path
 
-from installer.core.models import AppConfig, BrowserDefinition, BrowserProfile
+from core.models import AppConfig, BrowserDefinition, BrowserProfile
 
 
 def generate_update_manifest_xml(extension_id: str, crx_url: str, version: str = "1.0.0") -> str:

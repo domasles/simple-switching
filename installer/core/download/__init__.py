@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from installer.core.download.factory import get_vendor
-from installer.core.models import AppConfig
+from core.download.factory import get_vendor
+from core.models import AppConfig
 
 
 def download_extension(config: AppConfig, cache_dir: Path, progress_callback=None) -> Path:
