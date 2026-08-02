@@ -29,7 +29,7 @@ def get_bundle_dir() -> Path:
     return Path(__file__).resolve().parent.parent.parent
 
 
-class ExtensionInstaller(App):
+class SimpleSwitchingInstaller(App):
     """Main Textual Application Controller."""
 
     CSS_PATH = "assets/style.css"
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     config_path = get_bundle_dir() / "config" / "config.json"
     cache_dir = Path.home() / "Downloads" / "cache"
 
-    app = ExtensionInstaller(
+    app = SimpleSwitchingInstaller(
         config_path=config_path,
         cache_dir=cache_dir,
         local_crx_path=args.local_path

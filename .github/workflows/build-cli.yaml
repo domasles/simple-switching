@@ -19,13 +19,13 @@ jobs:
         include:
           - target-os: linux
             os: ubuntu-latest
-            binary_name: ssi-cli-linux
+            binary_name: ssw-cli-linux
           - target-os: windows
             os: windows-latest
-            binary_name: ssi-cli-windows.exe
+            binary_name: ssw-cli-windows.exe
           - target-os: macos
             os: macos-latest
-            binary_name: ssi-cli-macos
+            binary_name: ssw-cli-macos
 
     steps:
       - uses: actions/checkout@v4

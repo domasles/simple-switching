@@ -16,13 +16,13 @@ class WelcomeScreen(Screen):
         with Container(id="welcome-container"):
             with Vertical():
                 yield Static(
-                    "[bold green]Browser Extension Installer[/bold green]\n",
+                    "[bold green]Simple Switching Installer[/bold green]",
                     classes="title"
                 )
 
                 yield Static(
                     "This tool will configure enterprise force-install policies and inject "
-                    "custom keyboard shortcuts into your Chromium browser profiles.\n"
+                    "custom keyboard shortcuts into your browser profiles.\n"
                 )
 
                 yield Static(f"[bold]Detected OS Platform:[/bold] [cyan]{sys.platform}[/cyan]\n")

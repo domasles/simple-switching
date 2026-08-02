@@ -11,7 +11,7 @@ class GitHubVendor(Vendor):
 
     def download(self, config: AppConfig, dest_path: Path, progress_callback=None) -> Path:
         headers = {"Accept": "application/vnd.github+json"}
-        api_url = f"https://api.github.com/repos/{config.remote_release_repo}/releases/tags/{config.remote_release_tag}"
+        api_url = f"https://api.github.com/repos/{config.remote_release_repo}/releases/{config.remote_release_tag}"
 
         # Fetch release info
         response = requests.get(api_url, headers=headers, timeout=30)

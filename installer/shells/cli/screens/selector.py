@@ -18,7 +18,7 @@ class SelectorScreen(Screen):
         with Container():
             with Vertical():
                 yield Static("[bold green]Select Target Profiles[/bold green]\n")
-                yield Static("Choose which browser profiles to target:", id="selector-description")
+                yield Static("Choose which browser profiles to target:\n", id="selector-description")
                 yield SelectionList[BrowserProfile](id="profile-list")
                 yield Button("Proceed", variant="primary", id="btn-submit")
 
