@@ -1,0 +1,61 @@
+name: Build CRX Extension
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build-extension:
+    name: Build CRX Extension
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: 'npm'
+          cache-dependency-path: extension/package-lock.json
+
+      - name: Install NPM Dependencies
+        working-directory: extension
+        run: npm ci
+
+      - name: Build Extension
+        working-directory: extension
+        run: npm run build
+
+      - name: Write Private Key
+        shell: bash
+        run: |
+          if [ -z "${{ secrets.CRX_PRIVATE_KEY }}" ]; then
+            echo "::error::CRX_PRIVATE_KEY secret is missing! Set CRX_PRIVATE_KEY in repository secrets."
+            exit 1
+          fi
+          echo "${{ secrets.CRX_PRIVATE_KEY }}" > extension/key.pem
+
+      - name: Package CRX Extension
+        working-directory: extension
+        run: npx crx3 -p key.pem -o dist/simple-switching.crx dist/
+
+      # Upload as artifact when running locally via act
+      - name: Upload CRX Artifact (Local Builds Only)
+        if: ${{ env.ACT == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: simple-switching-extension
+          path: extension/dist/simple-switching.crx
+          if-no-files-found: error
+
+      # Attach CRX to GitHub Release during live releases
+      - name: Upload CRX to GitHub Release
+        if: ${{ env.ACT != 'true' && github.event_name == 'release' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: extension/dist/simple-switching.crx

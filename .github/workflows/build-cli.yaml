@@ -9,21 +9,21 @@ permissions:
   contents: write
 
 jobs:
-  build-binaries:
-    name: Build Executable (${{ matrix.target_os }})
+  build-cli:
+    name: Build Executable (${{ matrix.target-os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        target_os: [linux, windows, macos]
+        target-os: [linux, windows, macos]
         include:
-          - target_os: linux
+          - target-os: linux
             os: ubuntu-latest
             binary_name: ssi-cli-linux
-          - target_os: windows
+          - target-os: windows
             os: windows-latest
             binary_name: ssi-cli-windows.exe
-          - target_os: macos
+          - target-os: macos
             os: macos-latest
             binary_name: ssi-cli-macos
 
