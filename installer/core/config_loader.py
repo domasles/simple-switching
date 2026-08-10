@@ -21,8 +21,6 @@ def _parse_platform_config(data: Optional[Dict[str, Any]]) -> Optional[PlatformB
     return PlatformBrowserConfig(
         config_path=data["config_path"],
         executables=data.get("executables", []),
-        policy_key=data.get("policy_key"),
-        policy_bundle=data.get("policy_bundle"),
         policy_dir=data.get("policy_dir"),
     )
 
@@ -42,8 +40,6 @@ def load_app_config(config_path: Path) -> AppConfig:
         browsers[b_key] = BrowserDefinition(
             key=b_key,
             display_name=b_data.get("display_name", b_key),
-            windows=_parse_platform_config(b_data.get("windows")),
-            macos=_parse_platform_config(b_data.get("macos")),
             linux=_parse_platform_config(b_data.get("linux")),
         )
 

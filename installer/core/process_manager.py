@@ -1,5 +1,4 @@
 import psutil
-import time
 
 from typing import List, Set
 

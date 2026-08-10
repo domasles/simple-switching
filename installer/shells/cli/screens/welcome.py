@@ -23,8 +23,6 @@ class WelcomeScreen(Screen):
                     "custom keyboard shortcuts into your browser profiles.\n"
                 )
 
-                yield Static(f"[bold]Detected OS Platform:[/bold] [cyan]{sys.platform}[/cyan]\n")
-
                 with Horizontal():
                     yield Button("Begin Setup", variant="primary", id="btn-install")
                     yield Button("Uninstall Extension", variant="warning", id="btn-uninstall")

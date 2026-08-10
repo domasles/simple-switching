@@ -1,11 +1,9 @@
-import sys
-
 from textual.widgets import Header, Footer, Log, ProgressBar, Static
 from textual.containers import Container, Vertical
 from textual.app import ComposeResult
 from textual.screen import Screen
 
-from core.download import download_extension, extract_extension
+from core.download import download_extension
 
 
 class DownloadProgressScreen(Screen):
@@ -46,18 +44,6 @@ class DownloadProgressScreen(Screen):
             )
 
             log.write_line(f"Saved to {crx_path}")
-
-            # Extract CRX for Windows/macOS
-            if sys.platform != "linux":
-                log.write_line("Extracting extension files...")
-                extracted_dir = extract_extension(crx_path, self.app.cache_dir, self.app.app_config)
-
-                if extracted_dir:
-                    log.write_line(f"Extracted to {extracted_dir}")
-
-                else:
-                    log.write_line("Extraction failed, continuing anyway...")
-
             self.app.call_from_thread(self._on_complete)
 
         except Exception as e:

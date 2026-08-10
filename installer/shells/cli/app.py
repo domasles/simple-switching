@@ -39,7 +39,7 @@ class SimpleSwitchingInstaller(App):
         "welcome": WelcomeScreen,
         "selector": SelectorScreen,
         "prompt_path": PathPromptScreen,
-        "progress": InstallProgressScreen,
+        "install_progress": InstallProgressScreen,
         "uninstall_progress": UninstallProgressScreen,
         "finish": FinishScreen,
     }
@@ -73,6 +73,11 @@ class SimpleSwitchingInstaller(App):
             shutil.copy2(self.local_crx_path, dest)
 
     def on_mount(self) -> None:
+        # Check if running on Linux only
+        if not sys.platform.startswith("linux"):
+            self.exit()
+            return
+
         self.discovered_profiles = scan_browser_profiles(self.app_config)
 
         if self.needs_download and self.app_config.remote_release_vendor:
@@ -96,6 +101,13 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    
+    # Check if running on Linux only
+    if not sys.platform.startswith("linux"):
+        print("Error: This installer only supports Linux.")
+        print("Simple Switching Installer is designed for Linux only.")
+        sys.exit(1)
+    
     config_path = get_bundle_dir() / "config" / "config.json"
     cache_dir = Path.home() / "Downloads" / "cache"
 

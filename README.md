@@ -2,7 +2,7 @@
 
 # Simple Switching
 
-A browser extension for switching through tabs in MRU (most recently used) order, with a cross-platform enterprise policy installer for managed deployments.
+A browser extension for switching through tabs in MRU (most recently used) order, with a Linux-only enterprise policy installer for managed deployments.
 
 ## Why?
 
@@ -26,7 +26,7 @@ Simple Switching consists of two parts:
 ## Features
 
 - **MRU Tab Cycling** - Switch tabs by recent usage order, per window
-- **Cross-Browser Support** - Has presets for Chrome, Edge, Brave and Vivaldi (new browser versions might require tweaks within installer/config/config.json, not every browser and platform is guaranteed to work)
+- **Linux-Only Support** - Designed for Linux distributions with policy-based browser management
 - **Enterprise Policy Deployment** - Force-installs extension via native browser management systems
 - **Automatic Profile Discovery** - Scans filesystem for browser profiles with valid Preferences files
 - **Shortcut Injection** - Configures the keyboard shortcut directly in browser Preferences
@@ -48,11 +48,16 @@ The installer reads a configuration file defining supported browsers and their p
 3. Injects the shortcut keybinding into each profile's Preferences
 4. Serves the .crx and update manifest locally for policy consumption
 
-On Windows it writes to Registry. On macOS it writes to /Library/Preferences. On Linux it uses pkexec to write JSON policy files to managed directories. Windows and macOS requires admin/root rights elevation.
+On Linux it uses `pkexec` to write JSON policy files to managed directories (e.g., `/etc/opt/chrome/policies/managed/`).
 
 ## Build Instructions
 
 ### Extension
+
+```bash
+# Generate a key
+openssl genrsa -out key.pem 2048
+```
 
 **nektos/act build (GH actions local runner)**
 
@@ -74,9 +79,6 @@ cd extension
 npm install
 npm run build
 
-# Generate a key
-openssl genrsa -out key.pem 2048
-
 npx crx3 -p ./key.pem -o ./build/extension.crx ./dist
 ```
 
@@ -84,12 +86,12 @@ You will find built files within the root `build/` folder
 
 ### Installer
 
+> NOTE: Only Linux is currently supported
+
 **nektos/act build (GH actions local runner)**
 
-> NOTE: Only Linux builds currently working
-
 ```bash
-act workflow_dispatch -j build-extension
+act workflow_dispatch -j build-cli
 ```
 
 **Python PyInstaller builds**
@@ -98,10 +100,6 @@ act workflow_dispatch -j build-extension
 ```bash
 cd installer
 
-# Windows
-python -m PyInstaller --onefile --paths . --name="ssi-cli.exe" --add-data "config;config" --add-data "shells/cli/assets;assets" shells/cli/app.py
-
-# Linux/macOS
 python -m PyInstaller --onefile --paths . --name="ssi-cli" --add-data "config:config" --add-data "shells/cli/assets:assets" shells/cli/app.py
 ```
 
@@ -115,8 +113,8 @@ The installer pre-build is configured via `installer/config/config.json`. It def
 - Supported browsers with display names and platform-specific paths:
   - Config directory (where profiles live)
   - Executable names (for PATH lookup)
-  - Policy keys (Windows Registry path, macOS bundle ID, Linux policy directory)
-- Shortcut mappings per platform (Windows, macOS, Linux)
+  - Policy directory (Linux managed policy directory)
+- Shortcut mappings per platform (Linux)
 
 ## Architecture
 
@@ -139,9 +137,9 @@ simple-switching/
 │   │   ├── config_loader.py       # Loads config.json into typed models
 │   │   ├── discovery.py           # Filesystem profile scanner
 │   │   ├── models.py              # Dataclasses (AppConfig, BrowserProfile)
-│   │   ├── policy_installer.py    # Cross-platform policy deployment
+│   │   ├── policy_installer.py    # Linux policy deployment
 │   │   ├── preferences_editor.py  # Shortcut injection into Preferences
-│   │   ├── uninstaller.py         # Policy/shortcut/extension cleanup
+│   │   ├── uninstaller.py         # Policy/extension cleanup
 │   │   ├── local_server.py        # Local HTTP server for .crx + update XML
 │   │   ├── download/              # Download vendors (GitHub, custom URL)
 │   │   └── process_manager.py

@@ -12,15 +12,6 @@ def _read_header(cache_dir: Path, config: AppConfig) -> bytes:
         return f.read(struct.unpack("<I", f.read(4))[0] if f.seek(8) else 0)
 
 
-def get_extension_pubkey(cache_dir: Path, config: AppConfig) -> str:
-    header = _read_header(cache_dir, config)
-
-    idx = header.find(b"\x0a")
-    key_len = (header[idx + 1] & 0x7F) | (header[idx + 2] << 7)
-
-    return base64.b64encode(header[idx + 3 : idx + 3 + key_len]).decode("utf-8")
-
-
 def get_extension_id(cache_dir: Path, config: AppConfig) -> str:
     header = _read_header(cache_dir, config)
 

@@ -7,22 +7,6 @@
   "browsers": {
     "chrome": {
       "display_name": "Google Chrome",
-      "windows": {
-        "config_path": "%LOCALAPPDATA%/Google/Chrome/User Data",
-        "executables": [
-          "%PROGRAMFILES%\\Google\\Chrome\\Application\\chrome.exe",
-          "%PROGRAMFILES(X86)%\\Google\\Chrome\\Application\\chrome.exe",
-          "%LOCALAPPDATA%\\Google\\Chrome\\Application\\chrome.exe"
-        ],
-        "policy_key": "Google\\Chrome"
-      },
-      "macos": {
-        "config_path": "~/Library/Application Support/Google/Chrome",
-        "executables": [
-          "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-        ],
-        "policy_bundle": "com.google.Chrome"
-      },
       "linux": {
         "config_path": "~/.config/google-chrome",
         "executables": ["google-chrome", "google-chrome-stable", "chrome"],
@@ -31,21 +15,6 @@
     },
     "chromium": {
       "display_name": "Chromium",
-      "windows": {
-        "config_path": "%LOCALAPPDATA%/Chromium/User Data",
-        "executables": [
-          "%PROGRAMFILES%\\Chromium\\Application\\chrome.exe",
-          "%LOCALAPPDATA%\\Chromium\\Application\\chrome.exe"
-        ],
-        "policy_key": "Chromium"
-      },
-      "macos": {
-        "config_path": "~/Library/Application Support/Chromium",
-        "executables": [
-          "/Applications/Chromium.app/Contents/MacOS/Chromium"
-        ],
-        "policy_bundle": "org.chromium.Chromium"
-      },
       "linux": {
         "config_path": "~/.config/chromium",
         "executables": ["chromium", "chromium-browser"],
@@ -54,21 +23,6 @@
     },
     "edge": {
       "display_name": "Microsoft Edge",
-      "windows": {
-        "config_path": "%LOCALAPPDATA%/Microsoft/Edge/User Data",
-        "executables": [
-          "%PROGRAMFILES%\\Microsoft\\Edge\\Application\\msedge.exe",
-          "%PROGRAMFILES(X86)%\\Microsoft\\Edge\\Application\\msedge.exe"
-        ],
-        "policy_key": "Microsoft\\Edge"
-      },
-      "macos": {
-        "config_path": "~/Library/Application Support/Microsoft Edge",
-        "executables": [
-          "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
-        ],
-        "policy_bundle": "com.microsoft.Edge"
-      },
       "linux": {
         "config_path": "~/.config/microsoft-edge",
         "executables": ["microsoft-edge", "microsoft-edge-stable"],
@@ -77,21 +31,6 @@
     },
     "brave": {
       "display_name": "Brave Browser",
-      "windows": {
-        "config_path": "%LOCALAPPDATA%/BraveSoftware/Brave-Browser/User Data",
-        "executables": [
-          "%PROGRAMFILES%\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
-          "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
-        ],
-        "policy_key": "BraveSoftware\\Brave-Browser"
-      },
-      "macos": {
-        "config_path": "~/Library/Application Support/BraveSoftware/Brave-Browser",
-        "executables": [
-          "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
-        ],
-        "policy_bundle": "com.brave.Browser"
-      },
       "linux": {
         "config_path": "~/.config/BraveSoftware/Brave-Browser",
         "executables": ["brave-browser", "brave", "brave-browser-stable"],
@@ -100,21 +39,6 @@
     },
     "vivaldi": {
       "display_name": "Vivaldi",
-      "windows": {
-        "config_path": "%LOCALAPPDATA%/Vivaldi/User Data",
-        "executables": [
-          "%PROGRAMFILES%\\Vivaldi\\Application\\vivaldi.exe",
-          "%LOCALAPPDATA%\\Vivaldi\\Application\\vivaldi.exe"
-        ],
-        "policy_key": "Vivaldi"
-      },
-      "macos": {
-        "config_path": "~/Library/Application Support/Vivaldi",
-        "executables": [
-          "/Applications/Vivaldi.app/Contents/MacOS/Vivaldi"
-        ],
-        "policy_bundle": "com.vivaldi.Vivaldi"
-      },
       "linux": {
         "config_path": "~/.config/vivaldi",
         "executables": ["vivaldi", "vivaldi-bin", "vivaldi-stable"],
@@ -123,8 +47,6 @@
     }
   },
   "shortcut": {
-    "windows": "win:Ctrl+Tab",
-    "macos": "mac:Ctrl+Tab",
     "linux": "linux:Ctrl+Tab"
   }
 }

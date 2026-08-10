@@ -1,5 +1,6 @@
+import subprocess
 import shutil
-import sys
+import shlex
 
 from pathlib import Path
 from typing import List
@@ -12,13 +13,6 @@ def remove_browser_policies(profiles: List[BrowserProfile], config: AppConfig) -
 
     if not profiles:
         return []
-
-    # Only Linux uses policy-based installation
-    if not sys.platform.startswith("linux"):
-        return profiles
-
-    import subprocess
-    import shlex
 
     commands = []
     profile_cmd_map = []

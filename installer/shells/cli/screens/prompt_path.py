@@ -39,7 +39,7 @@ class PathPromptScreen(Screen):
                 self.app.push_screen("uninstall_progress")
 
             else:
-                self.app.push_screen("progress")
+                self.app.push_screen("install_progress")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "btn-submit-path":
@@ -76,4 +76,4 @@ class PathPromptScreen(Screen):
                     self.app.push_screen("uninstall_progress")
 
                 else:
-                    self.app.push_screen("progress")
+                    self.app.push_screen("install_progress")

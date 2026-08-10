@@ -1,4 +1,3 @@
-import tempfile
 import json
 import sys
 import os
@@ -12,11 +11,7 @@ from core.models import AppConfig, BrowserProfile
 def get_platform_shortcut_key(shortcut_map: Dict[str, str]) -> str:
     """Determines platform-specific shortcut key."""
 
-    if sys.platform == "win32":
-        return shortcut_map.get("windows", "win:Ctrl+Tab")
-    elif sys.platform == "darwin":
-        return shortcut_map.get("macos", "mac:Ctrl+Tab")
-    else:
+    if sys.platform.startswith("linux"):
         return shortcut_map.get("linux", "linux:Ctrl+Tab")
 
 

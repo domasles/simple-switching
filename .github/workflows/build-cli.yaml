@@ -1,4 +1,4 @@
-name: Build Simple Switching Installers
+name: Build Simple Switching Installer
 
 on:
   workflow_dispatch:
@@ -15,17 +15,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target-os: [linux, windows, macos]
+        target-os: [linux]
         include:
           - target-os: linux
             os: ubuntu-latest
             binary_name: ssw-cli-linux
-          - target-os: windows
-            os: windows-latest
-            binary_name: ssw-cli-windows.exe
-          - target-os: macos
-            os: macos-latest
-            binary_name: ssw-cli-macos
 
     steps:
       - uses: actions/checkout@v4
@@ -45,18 +39,15 @@ jobs:
         working-directory: installer
         shell: bash
         run: |
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            SEP=";"
-          else
-            SEP=":"
-          fi
-
           python -m PyInstaller --onefile \
             --paths . \
             --name="${{ matrix.binary_name }}" \
-            --add-data "config${SEP}config" \
-            --add-data "shells/cli/assets${SEP}assets" \
+            --add-data "config:config" \
+            --add-data "shells/cli/assets:assets" \
             shells/cli/app.py
+
+      - name: Make Binary Executable
+        run: chmod +x installer/dist/${{ matrix.binary_name }}
 
       # Upload as artifact when running locally via act
       - name: Upload Binary Artifact (Local Builds Only)

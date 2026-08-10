@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import List
 
 from textual.widgets import Button, Header, Footer, SelectionList, Static
 from textual.widgets.selection_list import Selection
@@ -71,4 +71,4 @@ class SelectorScreen(Screen):
                     self.app.push_screen("prompt_path")
 
                 else:
-                    self.app.push_screen("progress")
+                    self.app.push_screen("install_progress")

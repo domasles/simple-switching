@@ -22,17 +22,10 @@ def generate_update_manifest_xml(extension_id: str, crx_url: str, version: str =
 
 
 def deploy_browser_policy(profiles: List[BrowserProfile], extension_id: str, config: AppConfig, update_xml_url: str) -> List[BrowserProfile]:
-    """Deploys force-installation enterprise policies.
-    
-    Only deploys policies on Linux. Windows and macOS use developer mode installation.
-    """
+    """Deploys force-installation enterprise policies."""
 
     if not profiles:
         return []
-
-    # Only Linux supports policy-based installation
-    if not sys.platform.startswith("linux"):
-        return profiles
 
     commands = []
     profile_cmd_map = []
