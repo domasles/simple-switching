@@ -1,5 +1,6 @@
 import subprocess
 import time
+import sys
 
 from pathlib import Path
 
@@ -32,8 +33,8 @@ class UninstallProgressScreen(Screen):
         """Triggers worker when screen mounts."""
         self.run_worker(self._run_uninstallation_pipeline, thread=True)
 
-    def _flush_browser_policy_state(self, profile) -> None:
-        """Launches browser briefly to force syncing of applied policy removal."""
+    def _flush_browser_state(self, profile) -> None:
+        """Launches browser briefly to force syncing of applied changes."""
 
         exec_path = getattr(profile, "executable_path", None) or "chromium"
 
@@ -99,39 +100,58 @@ class UninstallProgressScreen(Screen):
         terminate_browser_processes(selected_profiles)
         progress.advance(25)
 
-        log.write_line("Step 2/4: Removing enterprise policy files...")
-        eligible_profiles = remove_browser_policies(selected_profiles, extension_id, config)
+        if sys.platform.startswith("linux"):
+            log.write_line("Step 2/4: Removing enterprise policy files...")
+            eligible_profiles = remove_browser_policies(selected_profiles, config)
 
-        eligible_set = set(eligible_profiles)
+            eligible_set = set(eligible_profiles)
 
-        for profile in selected_profiles:
-            if profile not in eligible_set:
-                log.write_line(f"  Policy removal failed for {profile.label}")
-                results["skipped"].append(profile.label)
+            for profile in selected_profiles:
+                if profile not in eligible_set:
+                    log.write_line(f"  Policy removal failed for {profile.label}")
+                    results["skipped"].append(profile.label)
 
-        progress.advance(25)
+            progress.advance(25)
 
-        log.write_line("Step 3/4: Removing extension directory...")
+            log.write_line("Step 3/4: Removing extension directory...")
 
-        for profile in eligible_profiles:
-            dir_removed = remove_extension_directory(profile, extension_id)
+            for profile in eligible_profiles:
+                dir_removed = remove_extension_directory(profile, extension_id)
 
-            if dir_removed:
-                log.write_line(f"  Uninstalled for {profile.label}")
-                results["success"].append(profile.label)
+                if dir_removed:
+                    log.write_line(f"  Uninstalled for {profile.label}")
+                    results["success"].append(profile.label)
 
-            else:
-                log.write_line(f"  Failed to fully clean {profile.label}")
-                results["skipped"].append(profile.label)
+                else:
+                    log.write_line(f"  Failed to fully clean {profile.label}")
+                    results["skipped"].append(profile.label)
 
-        progress.advance(25)
+            progress.advance(25)
 
-        log.write_line("Step 4/4: Flushing browser policy state...")
+            log.write_line("Step 4/4: Flushing browser policy state...")
 
-        for profile in eligible_profiles:
-            self._flush_browser_policy_state(profile)
+            for profile in eligible_profiles:
+                self._flush_browser_state(profile)
 
-        progress.advance(25)
+            progress.advance(25)
+
+        else:
+            # Windows/macOS: Just remove extension directory
+            log.write_line("Step 2/4: Removing extension directory...")
+
+            for profile in selected_profiles:
+                dir_removed = remove_extension_directory(profile, extension_id)
+
+                if dir_removed:
+                    log.write_line(f"  Uninstalled for {profile.label}")
+                    results["success"].append(profile.label)
+
+                else:
+                    log.write_line(f"  Failed to fully clean {profile.label}")
+                    results["skipped"].append(profile.label)
+
+            progress.advance(50)
+
         app.installation_results = results
 
         self.app.call_from_thread(self.app.push_screen, "finish")
