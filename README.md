@@ -50,6 +50,22 @@ The installer reads a configuration file defining supported browsers and their p
 
 On Linux it uses `pkexec` to write JSON policy files to managed directories (e.g., `/etc/opt/chrome/policies/managed/`).
 
+## Running the installer
+
+Built application must be launched through the terminal:
+
+```bash
+./ssw-cli-linux
+```
+
+Running through Python requires running the script as a module:
+
+```bash
+# After cloning, from project's directory run:
+cd installer
+python -m shells.cli.app
+```
+
 ## Build Instructions
 
 ### Extension
@@ -100,7 +116,7 @@ act workflow_dispatch -j build-cli
 ```bash
 cd installer
 
-python -m PyInstaller --onefile --paths . --name="ssi-cli" --add-data "config:config" --add-data "shells/cli/assets:assets" shells/cli/app.py
+python -m PyInstaller --onefile --paths . --name="ssw-cli-linux" --add-data "config:config" --add-data "shells/cli/assets:assets" shells/cli/app.py
 ```
 
 You will find built files within the root `build/` folder
