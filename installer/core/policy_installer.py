@@ -50,7 +50,10 @@ def deploy_browser_policy(profiles: List[BrowserProfile], extension_id: str, con
                     "installation_mode": "force_installed",
                     "update_url": update_xml_url
                 }
-            }
+            },
+            "ExtensionInstallForcelist": [
+                f"{extension_id};{update_xml_url}"
+            ]
         }
 
         json_str = json.dumps(policy_data, indent=2)

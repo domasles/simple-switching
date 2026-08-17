@@ -13,20 +13,20 @@
         "policy_dir": "/etc/opt/chrome/policies/managed"
       }
     },
+    "chrome-canary": {
+      "display_name": "Google Chrome Canary",
+      "linux": {
+        "config_path": "~/.config/google-chrome-canary",
+        "executables": ["google-chrome-canary"],
+        "policy_dir": "/etc/opt/chrome/policies/managed"
+      }
+    },
     "chromium": {
       "display_name": "Chromium",
       "linux": {
         "config_path": "~/.config/chromium",
         "executables": ["chromium", "chromium-browser"],
         "policy_dir": "/etc/chromium/policies/managed"
-      }
-    },
-    "edge": {
-      "display_name": "Microsoft Edge",
-      "linux": {
-        "config_path": "~/.config/microsoft-edge",
-        "executables": ["microsoft-edge", "microsoft-edge-stable"],
-        "policy_dir": "/etc/opt/edge/policies/managed"
       }
     },
     "brave": {
